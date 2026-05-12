@@ -1,0 +1,44 @@
+# 🛡️ Aegis NetControl - Advanced SOC Dashboard
+
+**Aegis NetControl** is a high-performance Network Monitoring and Security Assessment tool developed as a **Final Graduation Project (PFE)**. It provides real-time visibility into local network nodes, device fingerprinting, and security stress-testing capabilities through a modern, professional "Purple Team" interface.
+
+---
+
+## 🚀 Key Features
+
+*   **Real-Time Node Discovery:** Automatically scans and lists all active devices in the local network using ARP reconnaissance.
+*   **Deep Fingerprinting:** Identifies Operating Systems (OS) and hardware vendors using advanced Nmap scanning techniques.
+*   **Service & Port Mapping:** Detects open ports and running protocols to assess the attack surface of each device.
+*   **Auto-Sync Mode:** Includes a customizable auto-refresh toggle that keeps the dashboard updated without manual intervention.
+*   **Security Simulation:** Features a controlled DoS (Denial of Service) simulation tool for network stress testing and vulnerability demonstration.
+*   **Glassmorphism UI:** A premium, dark-themed dashboard designed with Tailwind CSS for maximum professional impact.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | HTML5, Tailwind CSS, FontAwesome, JavaScript (ES6) |
+| **Backend** | Node.js, Express.js |
+| **Real-time Engine** | Socket.io |
+| **Security Core** | Nmap, Arp-scan, Hping3 |
+| **Platform** | Kali Linux |
+
+---
+
+## 📋 System Requirements
+
+To ensure full functionality of the scanning engines:
+*   **Operating System:** Linux (Preferred: Kali Linux / Debian).
+*   **Permissions:** Root/Sudo access (Required for Nmap OS detection and ARP scanning).
+*   **Network:** The environment must use a **Bridged Adapter** if running inside a Virtual Machine to access the physical LAN.
+
+---
+
+## ⚙️ Installation & Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/your-username/aegis-netcontrol.git](https://github.com/your-username/aegis-netcontrol.git)
+   cd aegis-netcontrol

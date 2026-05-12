@@ -1,0 +1,9 @@
+# 1. Install Node.js dependencies
+npm install express socket.io
+
+# 2. Install System Tools
+sudo apt update
+sudo apt install nmap arp-scan hping3 -y
+
+# 3. Run the project
+sudo node server.js
