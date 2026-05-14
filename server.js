@@ -16,7 +16,6 @@ io.on('connection', (socket) => {
         if (isScanning) return;
         isScanning = true;
 
-        // Step 1: Rapid Recon (Arp-scan)
         exec('sudo arp-scan --localnet --retry=2', (error, stdout) => {
             if (error) { isScanning = false; return; }
 
@@ -31,24 +30,60 @@ io.on('connection', (socket) => {
 
             let doneCount = 0;
             targets.forEach(m => {
-                socket.emit('device_found', { ip: m[1], mac: m[2].toUpperCase(), name: m[3] ? m[3].trim() : "Unknown Hardware" });
+                // Sifet ma3loumat lawla li lqa arp-scan
+                socket.emit('device_found', { 
+                    ip: m[1], 
+                    mac: m[2].toUpperCase(), 
+                    name: m[3] ? m[3].trim() : "Unknown Hardware" 
+                });
 
-                // Step 2: Deep Fingerprinting (Nmap with OS-Guessing)
-                exec(`sudo nmap -O --osscan-guess -sV --max-rtt-timeout 150ms ${m[1]}`, (err, nmapOut) => {
+                // Deep Scan b Nmap: -Pn (No Ping) bach n-slla7o "System Hidden" dyal Windows Firewall
+                // -sV (Service Version) bach n-jbdo l-Protocols
+                exec(`sudo nmap -Pn -O --osscan-guess -sV --max-rtt-timeout 200ms ${m[1]}`, (err, nmapOut) => {
                     doneCount++;
+                    
                     let os = "System Hidden";
                     let ports = [];
+                    let protocols = [];
+                    let nmapVendor = "";
 
                     if (!err && nmapOut) {
-                        const osM = nmapOut.match(/OS details: (.*?)\n/) || nmapOut.match(/Running: (.*?)\n/);
-                        if (osM) os = osM[1].split(',')[0].replace(/(\(.*\))/g, "");
+                        // Extract Vendor (Ila malqahch Arp-scan, nmap kayjibo mn MAC)
+                        const macMatch = nmapOut.match(/MAC Address: [0-9A-F:]+ \((.+?)\)/i);
+                        if (macMatch) nmapVendor = macMatch[1];
 
-                        const portRegex = /^(\d+)\/(tcp|udp)\s+open/gm;
+                        // Extract OS (Robust fallback)
+                        const osM = nmapOut.match(/OS details: (.*?)\n/) || 
+                                    nmapOut.match(/Aggressive OS guesses: (.*?)\n/) || 
+                                    nmapOut.match(/Running: (.*?)\n/);
+                                    
+                        if (osM) {
+                            os = osM[1].split(',')[0].replace(/(\(.*\))/g, "");
+                        } else if (nmapOut.includes("OS: Windows") || nmapOut.includes("Service Info: OS: Windows")) {
+                            os = "Windows (Firewalled)";
+                        } else if (nmapOut.includes("Linux")) {
+                            os = "Linux (Inferred)";
+                        }
+
+                        // Extract Ports & Protocols
+                        // Nmap format: "80/tcp open http"
+                        const portRegex = /^(\d+)\/(tcp|udp)\s+open\s+([^ \n]+)/gm;
                         let prt;
-                        while ((prt = portRegex.exec(nmapOut)) !== null) ports.push(prt[1]);
+                        while ((prt = portRegex.exec(nmapOut)) !== null) {
+                            ports.push(prt[1]);       // e.g., 80
+                            protocols.push(prt[3]);   // e.g., http, ssh, ftp
+                        }
                     }
 
-                    socket.emit('device_updated', { ip: m[1], os, ports: ports.join(', ') });
+                    // Sifet l-Update l-Frontend
+                    socket.emit('device_updated', { 
+                        ip: m[1], 
+                        os: os, 
+                        ports: ports.length ? ports.join(', ') : '', 
+                        protocols: protocols.length ? [...new Set(protocols)].join(', ') : '',
+                        nmapVendor: nmapVendor // Had l-vendor ghan-bdlo bih "Unknown" f UI
+                    });
+
                     if (doneCount === targets.length) isScanning = false;
                 });
             });
@@ -57,8 +92,9 @@ io.on('connection', (socket) => {
 
     socket.on('launch_attack', (ip) => {
         exec(`sudo hping3 --flood --udp -p 80 ${ip}`);
-        console.log(`[PFE-ALERT] Attack Simulation on ${ip}`);
+        console.log(`[CyberLens-ALERT] Attack Simulation triggered on ${ip}`);
     });
 });
 
-server.listen(3000, () => console.log('Aegis NetControl: http://localhost:3000'));
+const PORT = 3000;
+server.listen(PORT, () => console.log(`CyberLens PFE Live on http://localhost:${PORT}`));
