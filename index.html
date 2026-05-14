@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFE | Aegis NetControl</title>
+    <title>PFE | CyberLens Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,7 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         body { background: #050308; color: #f3e8ff; font-family: 'Plus Jakarta Sans', sans-serif; }
         .glass-card { background: rgba(15, 10, 25, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(168, 85, 247, 0.15); }
-        .sidebar { width: 300px; background: linear-gradient(180deg, #0f0a1f 0%, #050308 100%); border-right: 1px solid rgba(168, 85, 247, 0.1); }
+        .sidebar { width: 320px; background: linear-gradient(180deg, #0f0a1f 0%, #050308 100%); border-right: 1px solid rgba(168, 85, 247, 0.1); }
         .purple-glow { box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); }
         .progress-bar { height: 4px; background: #6b21a8; width: 0%; transition: width 1s linear; }
         ::-webkit-scrollbar { width: 5px; }
@@ -24,28 +24,42 @@
     <aside class="sidebar flex flex-col p-8 overflow-hidden">
         <div class="mb-10 text-center">
             <div class="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 purple-glow">
-                <i class="fas fa-shield-halved text-2xl text-white"></i>
+                <i class="fas fa-eye text-2xl text-white"></i>
             </div>
-            <h1 class="text-xl font-black tracking-widest text-white uppercase">AEGIS <span class="text-purple-500">SOC</span></h1>
-            <p class="text-[10px] text-purple-400 font-bold uppercase mt-1">Network Security PFE</p>
+            <h1 class="text-2xl font-black tracking-widest text-white uppercase">Cyber<span class="text-purple-500">Lens</span></h1>
+            <p class="text-[10px] text-purple-400 font-bold uppercase mt-1">Network Visibility PFE</p>
         </div>
 
-        <!-- Student/Project Info -->
+        <!-- PFE & Student Info -->
         <div class="mb-8 p-5 glass-card rounded-2xl border-purple-500/20">
             <h3 class="text-[10px] font-black text-purple-500 mb-3 uppercase tracking-widest">Graduation Info</h3>
             <div class="space-y-3 text-xs">
-                <div class="flex justify-between"><span class="text-purple-300/50">Student:</span> <span class="font-bold">OFPPT Trainee</span></div>
-                <div class="flex justify-between"><span class="text-purple-300/50">Project:</span> <span class="font-bold">Security Monitor</span></div>
-                <div class="flex justify-between"><span class="text-purple-300/50">Academic:</span> <span class="font-bold text-purple-400">2026</span></div>
+                <div class="flex justify-between"><span class="text-purple-300/50">Projet:</span> <span class="font-bold text-white">PFE 2026</span></div>
+                <!-- BDEL HAD L-MA3LOUMAT B DYAWLK -->
+                <div class="flex justify-between"><span class="text-purple-300/50">Réalisé par:</span> <span class="font-bold text-white">AMTRIF Ayman</span></div>
+                <div class="flex justify-between"><span class="text-purple-300/50">Établissement:</span> <span class="font-bold text-purple-400">ETIGA</span></div>
+                <div class="flex justify-between"><span class="text-purple-300/50">Encadrant:</span> <span class="font-bold text-white">RAHMOUNI</span></div>
             </div>
         </div>
 
         <!-- Live Statistics -->
         <div class="space-y-6">
             <h3 class="text-[10px] font-black text-purple-500 uppercase tracking-widest">Network Metrics</h3>
-            <div class="p-6 glass-card rounded-3xl relative overflow-hidden group">
+            
+            <!-- Active Devices -->
+            <div class="p-6 glass-card rounded-3xl relative overflow-hidden group border-purple-500/10">
                 <p class="text-xs text-purple-300/70 mb-1 font-semibold">Active Devices</p>
                 <p id="totalCount" class="text-4xl font-black text-white">00</p>
+            </div>
+
+            <!-- Global Protocols (NEW SECTION) -->
+            <div class="p-5 glass-card rounded-2xl relative overflow-hidden border-purple-500/10">
+                <p class="text-xs text-purple-300/70 mb-2 font-semibold flex items-center gap-2">
+                    <i class="fas fa-network-wired text-purple-500"></i> Open Protocols (Network)
+                </p>
+                <div id="globalProtocols" class="flex flex-wrap gap-2 text-[10px]">
+                    <span class="text-purple-500/50 italic">Waiting for scan...</span>
+                </div>
             </div>
             
             <!-- Auto-Refresh Progress -->
@@ -57,8 +71,8 @@
             </div>
         </div>
 
-        <div class="mt-auto pt-6 text-[10px] text-center text-purple-500/40 font-mono">
-            SECURE INFRASTRUCTURE v2.0
+        <div class="mt-auto pt-6 text-[10px] text-center text-purple-500/40 font-mono italic text-xs">
+            &copy; 2026 CyberLens Framework
         </div>
     </aside>
 
@@ -66,20 +80,20 @@
     <main class="flex-1 flex flex-col p-8 overflow-hidden relative">
         <header class="flex justify-between items-center mb-10 z-10">
             <div>
-                <h2 class="text-3xl font-black tracking-tight">Security <span class="text-purple-600">Dashboard</span></h2>
+                <h2 class="text-3xl font-black tracking-tight">Security <span class="text-purple-600 underline">Dashboard</span></h2>
                 <p class="text-sm text-purple-400/50 font-medium">Real-time reconnaissance and fingerprinting</p>
             </div>
             
             <div class="flex items-center gap-6">
                 <div class="flex items-center gap-3 bg-purple-900/20 px-4 py-2 rounded-xl border border-purple-500/10">
-                    <span class="text-[10px] font-bold text-purple-300">AUTO-REFRESH</span>
+                    <span class="text-[10px] font-bold text-purple-300 uppercase">Auto-Refresh</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="autoToggle" class="sr-only peer">
                         <div class="w-9 h-5 bg-gray-700 rounded-full peer peer-checked:bg-purple-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
                     </label>
                 </div>
                 <button id="scanBtn" class="px-8 py-4 bg-purple-600 hover:bg-purple-500 text-white font-black text-xs uppercase tracking-[2px] rounded-full transition-all hover:scale-105 active:scale-95 purple-glow">
-                    <i class="fas fa-radar mr-2"></i> Run Manual Scan
+                    <i class="fas fa-radar mr-2"></i> Run Scan
                 </button>
             </div>
         </header>
@@ -94,7 +108,8 @@
                                 <th class="p-6">Hardware / MAC</th>
                                 <th class="p-6">OS Fingerprint</th>
                                 <th class="p-6">Open Ports</th>
-                                <th class="p-6 text-center">Security Action</th>
+                                <th class="p-6">Protocols</th> <!-- NEW COLUMN -->
+                                <th class="p-6 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="deviceTable" class="text-xs divide-y divide-purple-500/5"></tbody>
@@ -108,18 +123,20 @@
         const socket = io();
         let total = 0;
         let refreshTimer = null;
-        const SCAN_INTERVAL = 60; // 60 Seconds
+        let globalProtocolsSet = new Set(); // Bash njm3o ga3 les protocols
+        const SCAN_INTERVAL = 60; 
 
         const triggerScan = () => {
             document.getElementById('deviceTable').innerHTML = '';
             total = 0;
+            globalProtocolsSet.clear();
             document.getElementById('totalCount').innerText = '00';
+            document.getElementById('globalProtocols').innerHTML = '<span class="text-purple-500/50 italic animate-pulse">Scanning network...</span>';
             socket.emit('start_scan');
         };
 
         document.getElementById('scanBtn').onclick = triggerScan;
 
-        // Auto-Refresh Logic
         document.getElementById('autoToggle').onchange = (e) => {
             const box = document.getElementById('refreshBox');
             if (e.target.checked) {
@@ -148,16 +165,19 @@
             const row = document.createElement('tr');
             row.id = id;
             row.className = "hover:bg-purple-500/5 transition-colors";
+            
+            // L'Vendor name initialisation (n9dro nbddloh mn ba3d ila jabo nmap)
             row.innerHTML = `
                 <td class="p-6 font-mono text-white font-bold">${data.ip}</td>
                 <td class="p-6">
                     <div class="text-[10px] text-purple-300 font-mono">${data.mac}</div>
-                    <div class="font-bold text-white uppercase text-[11px]">${data.name}</div>
+                    <div id="vendor-${id}" class="font-bold text-white uppercase text-[11px]">${data.name}</div>
                 </td>
-                <td class="p-6" id="os-${id}"><span class="italic text-purple-500/50">Scanning...</span></td>
+                <td class="p-6" id="os-${id}"><span class="italic text-purple-500/50 animate-pulse">Scanning...</span></td>
                 <td class="p-6 font-mono text-purple-400" id="ports-${id}">---</td>
+                <td class="p-6 font-mono text-blue-300 uppercase text-[10px] font-bold" id="proto-${id}">---</td>
                 <td class="p-6 text-center">
-                    <button onclick="attack('${data.ip}')" class="px-4 py-2 border border-red-500/30 text-red-500 text-[9px] font-black uppercase rounded-lg hover:bg-red-500 hover:text-white transition">Simulate Attack</button>
+                    <button onclick="attack('${data.ip}')" class="px-4 py-2 border border-red-500/30 text-red-500 text-[9px] font-black uppercase rounded-lg hover:bg-red-500 hover:text-white transition">Simulate</button>
                 </td>
             `;
             document.getElementById('deviceTable').appendChild(row);
@@ -167,9 +187,31 @@
             const id = `node-${data.ip.replace(/\./g, '-')}`;
             const osCell = document.getElementById(`os-${id}`);
             const portsCell = document.getElementById(`ports-${id}`);
+            const protoCell = document.getElementById(`proto-${id}`);
+            const vendorCell = document.getElementById(`vendor-${id}`);
+            
+            // Fix "Unknown" Vendor ila kan nmap jabha
+            if (vendorCell && data.nmapVendor && vendorCell.innerText.includes("Unknown")) {
+                vendorCell.innerText = data.nmapVendor;
+                vendorCell.classList.add('text-green-400'); // n-lwnoha bach tban tbdlat
+            }
+
             if (osCell) {
                 osCell.innerHTML = `<span class="bg-purple-600/20 border border-purple-500/30 text-purple-200 px-3 py-1 rounded-full text-[10px] font-black">${data.os}</span>`;
                 portsCell.innerText = data.ports || 'SECURE';
+                protoCell.innerText = data.protocols || 'NONE';
+                
+                // Zid les protocols f l-Sidebar (Global Protocols)
+                if (data.protocols && data.protocols !== 'NONE') {
+                    const protos = data.protocols.split(', ');
+                    protos.forEach(p => globalProtocolsSet.add(p.toUpperCase()));
+                    
+                    const globalContainer = document.getElementById('globalProtocols');
+                    globalContainer.innerHTML = '';
+                    globalProtocolsSet.forEach(p => {
+                        globalContainer.innerHTML += `<span class="bg-purple-600/30 border border-purple-500/50 text-white px-2 py-1 rounded-md shadow-lg">${p}</span>`;
+                    });
+                }
             }
         });
 
